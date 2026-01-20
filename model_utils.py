@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import math
 
 def load_model():
     """Loads the pre-trained AI model from disk."""
@@ -153,9 +154,25 @@ def predict_habitability(df, pipeline):
 
     return results
 
+ # <--- ADD THIS AT THE TOP OF THE FILE IF MISSING
+
+# ... (rest of the code) ...
+
 def safe_float(val):
+    """
+    Safely converts a value to float.
+    Crucial Fix: Converts NaN/Infinity to 0.0 because JSON cannot handle NaN.
+    """
     try:
-        if val is None: return 0.0
-        return float(val)
+        if val is None: 
+            return 0.0
+        
+        f_val = float(val)
+        
+        # CHECK: If it is NaN (Not a Number) or Infinite, return 0.0
+        if math.isnan(f_val) or math.isinf(f_val):
+            return 0.0
+            
+        return f_val
     except:
         return 0.0
